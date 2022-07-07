@@ -1,0 +1,69 @@
+<template>
+    <div class="container">
+        <div class="row justify-content-center mt-1">
+            <div class="col-md-12">
+                <div>
+                    <button @click="unfavorite()" class="btn btn-danger" v-if="result">
+                        いいね解除
+                    </button>
+                    <button @click="favorite()" class="btn btn-success" v-else>
+                        いいね
+                    </button>
+                    <p>いいね数：{{ count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        props: ['post'],
+        data() {
+            return {
+                count: "",
+                result: "false" //追加
+            }
+        },
+        mounted () {
+            this.hasfavorites();
+            this.countfavorites(); //追加
+        },
+        methods: {
+            favorite() {
+                axios.get('/eats/' + this.post.id +'/favorites')
+                .then(res => {
+                    this.result = res.data.result;
+                    this.count = res.data.count;
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            },
+            unfavorite() {
+                axios.get('/eats/' + this.post.id +'/unfavorites')
+                .then(res => {
+                    this.result = res.data.result;
+                    this.count = res.data.count;
+                }).catch(function(error){
+                    console.log(error);
+                });
+            },
+            countfavorites() {
+                axios.get('/eats/' + this.post.id +'/countfavorites')
+                .then(res => {
+                    this.count = res.data;
+                }).catch(function(error){
+                    console.log(error);
+                });
+            },
+            hasfavorites() { //追加
+                axios.get('/eats/' + this.post.id +'/hasfavorites')
+                .then(res => {
+                    this.result = res.data;
+                }).catch(function(error){
+                    console.log(error);
+                });
+            }
+        }
+    }
+</script>
